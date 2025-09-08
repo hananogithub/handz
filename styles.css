@@ -695,6 +695,8 @@ section {
     display: flex;
     flex-direction: column;
     gap: 25px;
+    max-width: 800px;
+    width: 100%;
 }
 
 .company-item {
