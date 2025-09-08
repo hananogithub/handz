@@ -686,9 +686,8 @@ section {
 }
 
 .company-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 60px;
+    display: flex;
+    justify-content: center;
     align-items: start;
 }
 
@@ -1053,8 +1052,7 @@ section {
     }
 
     .company-content {
-        grid-template-columns: 1fr;
-        text-align: center;
+        justify-content: center;
     }
 
     .company-item {
