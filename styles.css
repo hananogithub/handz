@@ -688,7 +688,7 @@ section {
 .company-content {
     display: flex;
     justify-content: center;
-    align-items: start;
+    align-items: center;
 }
 
 .company-details {
@@ -703,7 +703,7 @@ section {
     display: grid;
     grid-template-columns: 200px 1fr;
     gap: 20px;
-    align-items: start;
+    align-items: center;
     padding: 20px;
     background: var(--white);
     border-radius: 15px;
