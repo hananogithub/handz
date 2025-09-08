@@ -108,8 +108,6 @@ if (statsSection) {
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
         // Get form data
         const formData = new FormData(contactForm);
         const name = formData.get('name');
@@ -119,6 +117,7 @@ if (contactForm) {
         
         // Simple validation
         if (!name || !email || !subject || !message) {
+            e.preventDefault();
             alert('すべてのフィールドを入力してください。');
             return;
         }
@@ -126,24 +125,35 @@ if (contactForm) {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
+            e.preventDefault();
             alert('有効なメールアドレスを入力してください。');
             return;
         }
         
-        // Simulate form submission
+        // Set reply-to field
+        contactForm.querySelector('input[name="_replyto"]').value = email;
+        
+        // Show loading state
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         
         submitBtn.textContent = '送信中...';
         submitBtn.disabled = true;
         
+        // Reset button after form submission (success or error)
         setTimeout(() => {
-            alert('お問い合わせありがとうございます。後日担当者よりご連絡いたします。');
-            contactForm.reset();
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 2000);
+        }, 3000);
     });
+}
+
+// Check for success parameter in URL
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('success') === 'true') {
+    alert('お問い合わせありがとうございます。後日担当者よりご連絡いたします。');
+    // Remove success parameter from URL
+    window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 // Parallax effect for hero shapes
