@@ -62,6 +62,12 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.nav-logo:hover {
+    transform: scale(1.05);
 }
 
 .logo-img {
@@ -848,6 +854,12 @@ section {
     display: flex;
     align-items: center;
     gap: 10px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+    transform: scale(1.05);
 }
 
 .footer-logo-img {
