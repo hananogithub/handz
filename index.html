@@ -146,7 +146,7 @@
     <section id="about" class="about">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Handz Corporationついて</h2>
+                <h2 class="section-title">Handz Corporationについて</h2>
                 <p class="section-subtitle">私たちのミッションとビジョン</p>
             </div>
             <div class="about-content">
@@ -373,7 +373,7 @@
                         </div>
                     </div>
                 </div>
-                <form class="contact-form" action="https://formspree.io/f/xpzqkqyz" method="POST">
+                <form class="contact-form" action="send_mail.php" method="POST">
                     <div class="form-group">
                         <input type="text" id="name" name="name" placeholder="お名前" required>
                     </div>
@@ -386,10 +386,6 @@
                     <div class="form-group">
                         <textarea id="message" name="message" placeholder="メッセージ" rows="5" required></textarea>
                     </div>
-                    <!-- Formspreeの設定 -->
-                    <input type="hidden" name="_subject" value="Handz Corporation お問い合わせ">
-                    <input type="hidden" name="_replyto" value="">
-                    <input type="hidden" name="_next" value="https://hananogithub.github.io/handz/?success=true">
                     <button type="submit" class="btn btn-primary">送信する</button>
                 </form>
             </div>

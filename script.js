@@ -107,7 +107,9 @@ if (statsSection) {
 // Form submission handling
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
         // Get form data
         const formData = new FormData(contactForm);
         const name = formData.get('name');
@@ -117,7 +119,6 @@ if (contactForm) {
         
         // Simple validation
         if (!name || !email || !subject || !message) {
-            e.preventDefault();
             alert('すべてのフィールドを入力してください。');
             return;
         }
@@ -125,13 +126,9 @@ if (contactForm) {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            e.preventDefault();
             alert('有効なメールアドレスを入力してください。');
             return;
         }
-        
-        // Set reply-to field
-        contactForm.querySelector('input[name="_replyto"]').value = email;
         
         // Show loading state
         const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -140,20 +137,30 @@ if (contactForm) {
         submitBtn.textContent = '送信中...';
         submitBtn.disabled = true;
         
-        // Reset button after form submission (success or error)
-        setTimeout(() => {
+        try {
+            // Send form data to PHP script
+            const response = await fetch('send_mail.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message);
+                contactForm.reset();
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('エラーが発生しました。しばらく時間をおいて再度お試しください。');
+        } finally {
+            // Reset button state
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 3000);
+        }
     });
-}
-
-// Check for success parameter in URL
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('success') === 'true') {
-    alert('お問い合わせありがとうございます。後日担当者よりご連絡いたします。');
-    // Remove success parameter from URL
-    window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 // Parallax effect for hero shapes
