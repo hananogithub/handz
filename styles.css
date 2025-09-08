@@ -172,9 +172,9 @@ body {
     color: var(--text-dark);
 }
 
-.title-line {
-    display: block;
-    margin-bottom: 5px;
+.title-inline {
+    display: inline;
+    margin: 0;
 }
 
 .highlight {
