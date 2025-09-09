@@ -117,7 +117,7 @@ if (contactForm) {
         const subject = formData.get('subject');
         const message = formData.get('message');
         
-        // Simple validation
+        // Client-side validation
         if (!name || !email || !subject || !message) {
             alert('すべてのフィールドを入力してください。');
             return;
@@ -130,6 +130,12 @@ if (contactForm) {
             return;
         }
         
+        // Character length validation
+        if (name.length > 100 || email.length > 255 || subject.length > 200 || message.length > 2000) {
+            alert('入力内容が長すぎます。');
+            return;
+        }
+        
         // Show loading state
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
@@ -138,13 +144,26 @@ if (contactForm) {
         submitBtn.disabled = true;
         
         try {
+            console.log('Sending form data to send_mail.php...');
+            
             // Send form data to PHP script
             const response = await fetch('send_mail.php', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             });
             
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const result = await response.json();
+            console.log('Response data:', result);
             
             if (result.success) {
                 alert(result.message);
@@ -153,8 +172,15 @@ if (contactForm) {
                 alert(result.message);
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('エラーが発生しました。しばらく時間をおいて再度お試しください。');
+            console.error('Error details:', error);
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                alert('ネットワークエラーが発生しました。インターネット接続を確認してください。');
+            } else if (error.message.includes('HTTP error')) {
+                alert('サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。');
+            } else {
+                alert('エラーが発生しました。しばらく時間をおいて再度お試しください。');
+            }
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
