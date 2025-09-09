@@ -107,9 +107,7 @@ if (statsSection) {
 // Form submission handling
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
+    contactForm.addEventListener('submit', (e) => {
         // Get form data
         const formData = new FormData(contactForm);
         const name = formData.get('name');
@@ -119,6 +117,7 @@ if (contactForm) {
         
         // Client-side validation
         if (!name || !email || !subject || !message) {
+            e.preventDefault();
             alert('すべてのフィールドを入力してください。');
             return;
         }
@@ -126,15 +125,20 @@ if (contactForm) {
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
+            e.preventDefault();
             alert('有効なメールアドレスを入力してください。');
             return;
         }
         
         // Character length validation
         if (name.length > 100 || email.length > 255 || subject.length > 200 || message.length > 2000) {
+            e.preventDefault();
             alert('入力内容が長すぎます。');
             return;
         }
+        
+        // Set reply-to field for Formspree
+        contactForm.querySelector('input[name="_replyto"]').value = email;
         
         // Show loading state
         const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -143,50 +147,20 @@ if (contactForm) {
         submitBtn.textContent = '送信中...';
         submitBtn.disabled = true;
         
-        try {
-            console.log('Sending form data to send_mail.php...');
-            
-            // Send form data to PHP script
-            const response = await fetch('send_mail.php', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            console.log('Response data:', result);
-            
-            if (result.success) {
-                alert(result.message);
-                contactForm.reset();
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error('Error details:', error);
-            
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                alert('ネットワークエラーが発生しました。インターネット接続を確認してください。');
-            } else if (error.message.includes('HTTP error')) {
-                alert('サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。');
-            } else {
-                alert('エラーが発生しました。しばらく時間をおいて再度お試しください。');
-            }
-        } finally {
-            // Reset button state
+        // Reset button after form submission (success or error)
+        setTimeout(() => {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }
+        }, 3000);
     });
+}
+
+// Check for success parameter in URL
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('success') === 'true') {
+    alert('お問い合わせありがとうございます。後日担当者よりご連絡いたします。');
+    // Remove success parameter from URL
+    window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 // Parallax effect for hero shapes
